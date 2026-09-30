@@ -1,4 +1,8 @@
 .venv/
 __pycache__/
 *.pyc
+*.egg-info/
 data/cwru/raw/*.mat
+database/*.db
+database/*.db-shm
+database/*.db-wal

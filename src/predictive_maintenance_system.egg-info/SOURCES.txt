@@ -1,8 +1,0 @@
-README.md
-pyproject.toml
-src/predictive_maintenance/__init__.py
-src/predictive_maintenance_system.egg-info/PKG-INFO
-src/predictive_maintenance_system.egg-info/SOURCES.txt
-src/predictive_maintenance_system.egg-info/dependency_links.txt
-src/predictive_maintenance_system.egg-info/requires.txt
-src/predictive_maintenance_system.egg-info/top_level.txt
