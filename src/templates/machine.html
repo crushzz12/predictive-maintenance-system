@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ machine["name"] }}
+{% endblock %}
+
+{% block main %}
+    <h2>{{ machine["name"] }}</h2>
+    <p>
+        <strong>Type:</strong>
+        {{ machine["machine_type"] or "Not specified" }}
+    </p>
+    <p>
+        <strong>Bearing:</strong>
+        {{ machine["bearing_model"] or "Not specified" }}
+    </p>
+    <p>
+        {{ machine["description"] or "" }}
+    </p>
+    <p>
+        <a href="{{ url_for('maintenance', machine_id=machine['id']) }}">Maintenance History</a>
+    </p>
+
+    <h3>Analysis History</h3>
+
+    {% if analyses %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Source</th>
+                <th>Condition</th>
+                <th>RPM</th>
+                <th>RMS</th>
+                <th>Kurtosis</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for analysis in analyses %}
+
+            <tr>
+                <td>
+                    <a href="{{ url_for('analysis_detail', analysis_id=analysis['analysis_id']) }}">
+                        {{ analysis["analysis_id"] }}
+                    </a>
+                </td>
+                <td>{{ analysis["source_file"] or "-"}}</td>
+                <td>{{ analysis["known_condition"] or "-"}}</td>
+                <td>
+                    {% if analysis["rpm"] is not none %}
+                        {{ "%.0f"|format(analysis["rpm"]) }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if analysis["rms"] is not none %}
+                        {{ "%.5f"|format(analysis["rms"]) }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if analysis["kurtosis"] is not none %}
+                        {{ "%.3f"|format(analysis["kurtosis"]) }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ analysis["health_status"] or "Not assessed" }}</td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+
+    <p>No analysis record available.</p>
+
+    {% endif %}
+{% endblock %}

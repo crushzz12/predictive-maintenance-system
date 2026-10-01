@@ -268,3 +268,75 @@ def get_maintenance_history(machine_id, database_path=DEFAULT_DATABASE_PATH):
         return histories
     finally:
         connection.close()
+
+
+def get_all_machines(database_path=DEFAULT_DATABASE_PATH):
+    """Get all registered machines in the database."""
+    
+    connection = get_connection(database_path)
+    try:
+        machines = connection.execute("SELECT * FROM machines ORDER BY name").fetchall()
+
+        return machines
+    finally:
+        connection.close()
+
+
+def get_machine_by_id(machine_id, database_path=DEFAULT_DATABASE_PATH):
+    """Get the machine info by its ID."""
+
+    connection = get_connection(database_path)
+    try:
+        machine = connection.execute(
+            "SELECT * FROM machines WHERE id = ?", (machine_id,)
+        ).fetchone()
+
+        return machine
+    finally:
+        connection.close()
+
+
+def get_analysis_by_id(analysis_id, database_path=DEFAULT_DATABASE_PATH):
+    """Get info of an analysis run by its ID."""
+
+    connection = get_connection(database_path)
+    try:
+        info = connection.execute(
+            """
+            SELECT
+                analysis_runs.id AS analysis_id,
+                analysis_runs.machine_id,
+                analysis_runs.source_file,
+                analysis_runs.known_condition,
+                analysis_runs.measured_at,
+                analysis_runs.rpm,
+                analysis_runs.sampling_rate_hz,
+                analysis_runs.window_start_s,
+                analysis_runs.window_duration_s,
+                analysis_runs.health_status,
+                analysis_runs.fault_indicator,
+                analysis_runs.created_at,
+
+                analysis_features.mean,
+                analysis_features.rms,
+                analysis_features.peak,
+                analysis_features.peak_to_peak,
+                analysis_features.std,
+                analysis_features.crest_factor,
+                analysis_features.kurtosis,
+                analysis_features.amp_1x,
+                analysis_features.amp_2x,
+                analysis_features.amp_3x,
+
+                machines.name AS machine_name
+            FROM analysis_runs 
+            JOIN analysis_features ON analysis_runs.id = analysis_features.analysis_run_id
+            JOIN machines ON analysis_runs.machine_id = machines.id
+            WHERE analysis_runs.id = ? 
+            """,
+            (analysis_id,)
+        ).fetchone()
+
+        return info
+    finally:
+        connection.close()

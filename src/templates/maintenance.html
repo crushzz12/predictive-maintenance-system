@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Maintenance
+{% endblock %}
+
+{% block main %}
+    <h2>Maintenance History</h2>
+
+    <h3>{{ machine["name"] }}</h3>
+    <p>
+        <a href="{{ url_for('machine_detail', machine_id=machine['id']) }}">
+            &#8592; Back to machine
+        </a>
+    </p>
+
+    {% if records %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Action</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+
+            <tr>
+                <td>{{ record["serviced_at"] }}</td>
+                <td>{{ record["action"] }}</td>
+                <td>{{ record["notes"] or "-" }}</td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    {% else %}
+
+    <p>No maintenance records available.</p>
+
+    {% endif %}
+
+{% endblock %}

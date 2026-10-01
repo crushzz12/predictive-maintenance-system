@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Analysis {{ analysis["analysis_id"] }}
+{% endblock %}
+
+{% block main %}
+    <h2>Analysis {{ analysis["analysis_id"] }}</h2>
+    <p>
+        <a href="{{ url_for('machine_detail', machine_id=analysis['machine_id']) }}">
+            &#8592; Back to {{ analysis["machine_name"] }}
+        </a>
+    </p>
+
+    <h3>Measurement Information</h3>
+
+    <table>
+        <tr>
+            <th>Machine</th>
+            <td>{{ analysis["machine_name"] }}</td>
+        </tr>
+        <tr>
+            <th>Source file</th>
+            <td>{{ analysis["source_file"] or "-"}}</td>
+        </tr>
+        <tr>
+            <th>Known condition</th>
+            <td>{{ analysis["known_condition"] or "-"}}</td>
+        </tr>
+        <tr>
+            <th>RPM</th>
+            <td>{{ analysis["rpm"] or "-"}}</td>
+        </tr>
+        <tr>
+            <th>Sampling rate</th>
+            <td>{{ analysis["sampling_rate_hz"] }} Hz</td>
+        </tr>
+        <tr>
+            <th>Window duration</th>
+            <td>{{ analysis["window_duration_s"] }} s</td>
+        </tr>
+    </table>
+
+    <h3>Time-Domain Features</h3>
+    <table>
+        <tr>
+            <th>Mean</th>
+            <td>{{ analysis["mean"] }}</td>
+        </tr>
+        <tr>
+            <th>RMS</th>
+            <td>{{ analysis["rms"] }}</td>
+        </tr>
+        <tr>
+            <th>Peak</th>
+            <td>{{ analysis["peak"] }}</td>
+        </tr>
+        <tr>
+            <th>Peak-to-peak</th>
+            <td>{{ analysis["peak_to_peak"] }}</td>
+        </tr>
+        <tr>
+            <th>Standard deviation</th>
+            <td>{{ analysis["std"] }}</td>
+        </tr>
+        <tr>
+            <th>Crest factor</th>
+            <td>{{ analysis["crest_factor"] }}</td>
+        </tr>
+        <tr>
+            <th>Kurtosis</th>
+            <td>{{ analysis["kurtosis"] }}</td>
+        </tr>
+    </table>
+
+    <h3>Frequency-Domain Features</h3>
+    <table>
+        <tr>
+            <th>1X amplitude</th>
+            <td>{{ analysis["amp_1x"] }}</td>
+        </tr>
+        <tr>
+            <th>2X amplitude</th>
+            <td>{{ analysis["amp_2x"] }}</td>
+        </tr>
+        <tr>
+            <th>3X amplitude</th>
+            <td>{{ analysis["amp_3x"] }}</td>
+        </tr>
+    </table>
+
+    <h3>Condition Assessment</h3>
+    <p>
+        <strong>Status:</strong>
+        {{ analysis["health_status"] or "Not assessed" }}
+    </p>
+    <p>
+        <strong>Fault indicator:</strong>
+        {{ analysis["fault_indicator"] or "Not assessed" }}
+    </p>
+
+{% endblock %}

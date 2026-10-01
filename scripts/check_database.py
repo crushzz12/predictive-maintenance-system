@@ -7,7 +7,10 @@ from predictive_maintenance.db import (
     initialize_database,
     get_or_create_machine,
     add_analysis_run,
-    get_analysis_history
+    get_analysis_history,
+    get_all_machines,
+    get_machine_by_id,
+    get_analysis_by_id
 )
 
 SAMPLING_RATE = 48000
@@ -67,3 +70,16 @@ for history in histories:
         f"RMS: {history['rms']:.6f} | "
         f"Kurtosis: {history['kurtosis']:.4f}"
     )
+
+# Test get info by ID functions
+"""
+machines = get_all_machines()
+for machine in machines:
+    print(dict(machine))
+
+machine = get_machine_by_id(1)
+print(dict(machine))
+
+analysis = get_analysis_by_id(1)
+print(dict(analysis))
+"""

@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Machines
+{% endblock %}
+
+{% block main %}
+    <h2>Machines</h2>
+
+    {% if machines %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Machine</th>
+                <th>Type</th>
+                <th>Bearing</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for machine in machines %}
+
+            <tr>
+                <td>{{ machine["id"] }}</td>
+                <td>
+                    <a href="{{ url_for('machine_detail', machine_id=machine['id']) }}">
+                        {{ machine["name"] }}
+                    </a>
+                </td>
+                <td>{{ machine["machine_type"] or "-"}}</td>
+                <td>{{ machine["bearing_model"] or "-"}}</td>
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+
+    <p>No machines found.</p>
+
+    {% endif %}
+{% endblock %}

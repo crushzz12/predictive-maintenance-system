@@ -12,7 +12,8 @@ dependencies = [
     "numpy",
     "pandas",
     "scipy",
-    "matplotlib"
+    "matplotlib",
+    "flask"
 ]
 
 [tool.setuptools.packages.find]
