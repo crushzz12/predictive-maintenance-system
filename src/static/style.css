@@ -1,23 +1,22 @@
 /* Choose theme colour */
 :root {
-    --bg: #0b0f17;
-    --sidebar: #111722;
-    --panel: #141b27;
-    --panel-hover: #182131;
+    --bg: #090909;
+    --sidebar: #0d0d0e;
+    --panel: #111214;
+    --panel-hover: #151619;
 
-    --border: #253044;
+    --border: #25262a;
 
-    --text: #f3f6fb;
-    --muted: #8c98aa;
+    --text: #f4f4f5;
+    --muted: #9a9ca3;
 
-    --primary: #4c7dff;
-    --primary-soft: rgba(76, 125, 255, 0.14);
+    --primary: #3b82f6;
 
-    --success: #31c48d;
-    --warning: #f5b942;
-    --danger: #ef5b69;
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
 
-    --radius: 14px;
+    --radius: 10px;
 }
 
 * {
@@ -26,9 +25,10 @@
 
 body {
     margin: 0;
-    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: radial-gradient(circle at top right, #162137, var(--bg) 35%);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
     color: var(--text);
+    font-size: 14px;
 }
 
 a {
@@ -47,7 +47,7 @@ a {
     position: sticky;
     top: 0;
     height: 100vh;
-    background: rgba(17, 23, 34, 0.96);
+    background: var(--sidebar);
     border-right: 1px solid var(--border);
     padding: 26px 18px;
     display: flex;
@@ -63,14 +63,14 @@ a {
 }
 
 .brand-icon {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     display: grid;
     place-items: center;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #4c7dff, #7857ff);
-    font-weight: 800;
-    letter-spacing: 1px;
+    border-radius: 8px;
+    background: #18191c;
+    border: 1px solid var(--border);
+    font-weight: 700;
 }
 
 .brand-subtitle {
@@ -97,8 +97,13 @@ a {
 }
 
 .nav-link:hover {
-    color: white;
-    background: var(--primary-soft);
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link:active {
+    background: rgba(59, 130, 246, 0.15);
+    color: #ffffff;
 }
 
 .sidebar-footer {
@@ -136,8 +141,9 @@ a {
 }
 
 .topbar h1 {
-    margin: 3px 0 0;
+    margin: 4px 0 0;
     font-size: 28px;
+    font-weight: 600;
 }
 
 .topbar-label {
@@ -166,11 +172,11 @@ a {
 }
 
 .card {
-    background: linear-gradient(145deg, rgba(24, 32, 47, 0.95), rgba(18, 25, 37, 0.95));
+    background: var(--panel);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 18px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .card:hover {
@@ -185,8 +191,8 @@ a {
 }
 
 .kpi-value {
-    font-size: 25px;
-    font-weight: 700;
+    font-size: 27px;
+    font-weight: 600;
 }
 
 .kpi-unit {
@@ -234,11 +240,12 @@ a {
 }
 
 .panel {
-    background: rgba(20, 27, 39, 0.94);
+    background: var(--panel);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
     min-width: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 .panel-header {
@@ -250,13 +257,14 @@ a {
 
 .panel-title {
     margin: 0;
-    font-size: 15px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .panel-subtitle {
     color: var(--muted);
-    font-size: 11px;
-    margin-top: 4px;
+    font-size: 13px;
+    margin-top: 5px;
 }
 
 /* Details */

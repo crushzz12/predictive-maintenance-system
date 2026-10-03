@@ -164,7 +164,7 @@
 
                     <tr>
                         <td>
-                            <a href="{{ url_for('analysis_detail', analysis_id=analysis['analysis_id']) }}">
+                            <a class="analysis-link" href="{{ url_for('analysis_detail', analysis_id=analysis['analysis_id']) }}">
                                 #{{ analysis["analysis_id"] }}
                             </a>
                         </td>
@@ -224,8 +224,8 @@
         const rmsValues = chartData.rms;
         const kurtosisValues = chartData.kurtosis;
 
-        const gridColor = "rgba(140, 152, 170, 0.12)";
-        const labelColor = "#8c98aa";
+        const gridColor = "rgba(255, 255, 255, 0.05)";
+        const labelColor = "#8f9198";
 
         new Chart(
             document.getElementById("rmsChart"), {
@@ -236,13 +236,13 @@
                         {
                             label: "RMS",
                             data: rmsValues,
-                            borderColor: "#4c7dff",
-                            backgroundColor: "rgba(76, 125, 255, 0.12)",
+                            borderColor: "#3b82f6",
+                            backgroundColor: "rgba(59, 130, 246, 0.08)",
                             borderWidth: 2,
                             tension: 0.35,
                             fill: true,
-                            pointRadius: 3,
-                            pointHoverRadius: 6
+                            pointRadius: 2,
+                            pointHoverRadius: 5
                         }
                     ]
                 },
@@ -291,8 +291,8 @@
                             borderWidth: 2,
                             tension: 0.35,
                             fill: true,
-                            pointRadius: 3,
-                            pointHoverRadius: 6
+                            pointRadius: 2,
+                            pointHoverRadius: 5
                         }
                     ]
                 },
