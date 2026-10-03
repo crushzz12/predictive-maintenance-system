@@ -28,9 +28,27 @@ def machine_detail(machine_id):
     if machine is None:
         abort(404)
 
+    # Get analysis histories (by default is ordered newest first)
     analyses = get_analysis_history(machine_id)
+    latest_analysis = None
+    if analyses:
+        latest_analysis = analyses[0]
 
-    return render_template("machine.html", machine=machine, analyses=analyses)
+    # Prepare chart data (reverse it to become from oldest to newest for charts)
+    chart_rows = list(reversed(analyses))
+    chart_labels = [f"Run {row['analysis_id']}" for row in chart_rows]
+    rms_values = [row["rms"] for row in chart_rows]
+    kurtosis_values = [row["kurtosis"] for row in chart_rows]
+
+    return render_template(
+        "machine.html",
+        machine=machine,
+        analyses=analyses,
+        latest_analysis=latest_analysis,
+        chart_labels=chart_labels,
+        rms_values=rms_values,
+        kurtosis_values=kurtosis_values
+    )
 
 
 @app.route("/analysis/<int:analysis_id>")
