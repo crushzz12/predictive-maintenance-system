@@ -5,7 +5,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 DATABASE_DIRECTORY = (PROJECT_ROOT / "database")
-DEFAULT_DATABASE_PATH = (DATABASE_DIRECTORY / "predictive-maintenance.db")
+DEFAULT_DATABASE_PATH = (DATABASE_DIRECTORY / "predictive_maintenance.db")
 SCHEMA_PATH = (DATABASE_DIRECTORY / "schema.sql")
 
 
@@ -114,21 +114,17 @@ def add_analysis_run(
     machine_id,
     sampling_rate_hz,
     window_duration_s,
-    features,
+    all_features,
     source_file=None,
     known_condition=None,
     measured_at=None,
     rpm=None,
     window_start_s=None,
-    spectral_features=None,
     health_status=None,
     fault_indicator=None,
     database_path=DEFAULT_DATABASE_PATH
 ):
     """Record one analysis run and its features, and return its primary key ID."""
-
-    if spectral_features is None:
-        spectral_features = {}
 
     connection = get_connection(database_path)
     try:
@@ -151,26 +147,31 @@ def add_analysis_run(
             """
             INSERT INTO analysis_features (
                 analysis_run_id, mean, rms, peak, peak_to_peak, std, crest_factor, kurtosis, 
-                amp_1x, amp_2x, amp_3x
+                amp_1x, amp_2x, amp_3x, env_bpfo_amp, env_bpfi_amp, env_rolling_amp
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 analysis_run_id,
 
                 # Insert time-domain features, while .get() get values and prevents KeyError
-                features.get("mean"),
-                features.get("rms"),
-                features.get("peak"),
-                features.get("peak_to_peak"),
-                features.get("std"),
-                features.get("crest_factor"),
-                features.get("kurtosis"),
+                all_features.get("mean"),
+                all_features.get("rms"),
+                all_features.get("peak"),
+                all_features.get("peak_to_peak"),
+                all_features.get("std"),
+                all_features.get("crest_factor"),
+                all_features.get("kurtosis"),
 
                 # Insert spectral / frequency-domain features
-                spectral_features.get("amp_1x"),
-                spectral_features.get("amp_2x"),
-                spectral_features.get("amp_3x")
+                all_features.get("amp_1x"),
+                all_features.get("amp_2x"),
+                all_features.get("amp_3x"),
+
+                # Insert envelope spectrum features
+                all_features.get("env_bpfo_amp"),
+                all_features.get("env_bpfi_amp"),
+                all_features.get("env_rolling_amp")
             )
         )
         connection.commit()
@@ -215,7 +216,10 @@ def get_analysis_history(machine_id, limit=100, database_path=DEFAULT_DATABASE_P
                 analysis_features.kurtosis,
                 analysis_features.amp_1x,
                 analysis_features.amp_2x,
-                analysis_features.amp_3x
+                analysis_features.amp_3x,
+                analysis_features.env_bpfo_amp,
+                analysis_features.env_bpfi_amp,
+                analysis_features.env_rolling_amp
             FROM analysis_runs 
             JOIN analysis_features ON analysis_runs.id = analysis_features.analysis_run_id
             WHERE analysis_runs.machine_id = ? 
@@ -327,6 +331,9 @@ def get_analysis_by_id(analysis_id, database_path=DEFAULT_DATABASE_PATH):
                 analysis_features.amp_1x,
                 analysis_features.amp_2x,
                 analysis_features.amp_3x,
+                analysis_features.env_bpfo_amp,
+                analysis_features.env_bpfi_amp,
+                analysis_features.env_rolling_amp,
 
                 machines.name AS machine_name
             FROM analysis_runs 
@@ -338,5 +345,27 @@ def get_analysis_by_id(analysis_id, database_path=DEFAULT_DATABASE_PATH):
         ).fetchone()
 
         return info
+    finally:
+        connection.close()
+
+
+def update_analysis_assessment(
+        analysis_id, health_status, fault_indicator, database_path=DEFAULT_DATABASE_PATH
+):
+    """Update the health status and fault indicator for a target analysis run."""
+
+    connection = get_connection(database_path)
+    try:
+        connection.execute(
+            """
+            UPDATE analysis_runs 
+            SET health_status = ?, 
+                fault_indicator = ?
+            WHERE id = ?
+            """,
+            (health_status, fault_indicator, analysis_id)
+        )
+
+        connection.commit()
     finally:
         connection.close()

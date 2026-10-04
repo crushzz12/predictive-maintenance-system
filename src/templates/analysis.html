@@ -92,11 +92,29 @@
     <h3>Condition Assessment</h3>
     <p>
         <strong>Status:</strong>
-        {{ analysis["health_status"] or "Not assessed" }}
+        {{ assessment["health"]["status"] or "Not assessed" }}
     </p>
     <p>
         <strong>Fault indicator:</strong>
-        {{ analysis["fault_indicator"] or "Not assessed" }}
+        {{ assessment["health"]["fault_indicator"] or "Not assessed" }}
     </p>
+    <p>
+        <strong>Bearing Evidence:</strong>
+        {{ assessment["bearing"]["strongest_label"] or "Not assessed" }}
+    </p>
+    <table>
+        <tr>
+            <th>BPFO evidence</th>
+            <td>{{ "%.2f" | format(assessment["bearing"]["z_scores"]["env_bpfo_amp"]) }}</td>
+        </tr>
+        <tr>
+            <th>BPFI evidence</th>
+            <td>{{ "%.2f" | format(assessment["bearing"]["z_scores"]["env_bpfi_amp"]) }}</td>
+        </tr>
+        <tr>
+            <th>Rolling Evidence</th>
+            <td>{{ "%.2f" | format(assessment["bearing"]["z_scores"]["env_rolling_amp"]) }}</td>
+        </tr>
+    </table>
 
 {% endblock %}

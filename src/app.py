@@ -1,5 +1,8 @@
 from flask import Flask, render_template, abort
 
+from pathlib import Path
+
+from predictive_maintenance.condition import load_baseline, evaluate_analysis
 from predictive_maintenance.db import (
     initialize_database,
     get_all_machines,
@@ -8,6 +11,10 @@ from predictive_maintenance.db import (
     get_analysis_by_id,
     get_maintenance_history
 )
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+BASELINE_PATH = PROJECT_ROOT / "config" / "condition_baseline.json"
+baseline = load_baseline(BASELINE_PATH)
 
 app = Flask(__name__)
 
@@ -32,7 +39,8 @@ def machine_detail(machine_id):
     analyses = get_analysis_history(machine_id)
     latest_analysis = None
     if analyses:
-        latest_analysis = analyses[0]
+        latest_analysis = dict(analyses[0])
+        assessment = evaluate_analysis(latest_analysis, baseline)
 
     # Prepare chart data (reverse it to become from oldest to newest for charts)
     chart_rows = list(reversed(analyses))
@@ -45,6 +53,7 @@ def machine_detail(machine_id):
         machine=machine,
         analyses=analyses,
         latest_analysis=latest_analysis,
+        assessment=assessment,
         chart_labels=chart_labels,
         rms_values=rms_values,
         kurtosis_values=kurtosis_values
@@ -55,11 +64,13 @@ def machine_detail(machine_id):
 def analysis_detail(analysis_id):
     """Show detailed analysis info including features and status."""
 
-    analysis = get_analysis_by_id(analysis_id)
+    analysis = dict(get_analysis_by_id(analysis_id))
     if analysis is None:
         abort(404)
 
-    return render_template("analysis.html", analysis=analysis)
+    assessment = evaluate_analysis(analysis, baseline)
+
+    return render_template("analysis.html", analysis=analysis, assessment=assessment)
 
 
 @app.route("/machine/<int:machine_id>/maintenance")

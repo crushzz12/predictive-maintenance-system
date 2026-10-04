@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS analysis_features (
     amp_1x REAL,
     amp_2x REAL,
     amp_3x REAL,
+    env_bpfo_amp REAL,
+    env_bpfi_amp REAL,
+    env_rolling_amp REAL,
     FOREIGN KEY (analysis_run_id) REFERENCES analysis_runs(id) ON DELETE CASCADE
 );
 

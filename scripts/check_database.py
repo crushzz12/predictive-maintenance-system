@@ -3,6 +3,7 @@ from pathlib import Path
 from predictive_maintenance.data_loader import load_cwru_file
 from predictive_maintenance.features import extract_time_features
 from predictive_maintenance.spectrum import calculate_fft, get_frequency_amplitude
+from predictive_maintenance.bearing import extract_envelope_features
 from predictive_maintenance.db import (
     initialize_database,
     get_or_create_machine,
@@ -45,17 +46,26 @@ spectral_features = {
     "amp_3x": get_frequency_amplitude(frequencies, amplitudes, 3 * shaft_frequency)
 }
 
+# Extract amplitudes for envelope-spectrum at bpfo, bpfi and rolling element frequency
+envelope_features = extract_envelope_features(analysis_signal, SAMPLING_RATE, rpm)
+
+# Combine all features together by adding the key/value pairs
+all_features = {
+    **features,
+    **spectral_features,
+    **envelope_features
+}
+
 # Register the data into database
 analysis_id = add_analysis_run(
     machine_id=machine_id, 
     sampling_rate_hz=SAMPLING_RATE, 
     window_duration_s=WINDOW_DURATION, 
-    features=features,
+    all_features=all_features,
     source_file="135.mat",
     known_condition="Outer race",
     rpm=rpm,
     window_start_s=0.0,
-    spectral_features=spectral_features
 )
 
 # Print out the analysis histories

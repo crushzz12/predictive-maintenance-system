@@ -1,0 +1,54 @@
+{
+    "metadata": {
+        "source_file": "97.mat",
+        "known_condition": "Normal",
+        "sampling_rate_hz": 48000,
+        "windows_duration_s": 1.0,
+        "window_count": 5,
+        "note": "Baseline derived from non-overlapping windows of one CWRU normal recording."
+    },
+    "features": {
+        "rms": {
+            "mean": 0.07374595582117749,
+            "std": 0.000893814732097519,
+            "warning_threshold": 0.07642740001747005,
+            "critical_threshold": 0.0791088442137626
+        },
+        "kurtosis": {
+            "mean": 2.765576113767957,
+            "std": 0.037252954474377646,
+            "warning_threshold": 2.87733497719109,
+            "critical_threshold": 2.989093840614223
+        },
+        "crest_factor": {
+            "mean": 3.7874251705763613,
+            "std": 0.30739733697400173,
+            "warning_threshold": 4.709617181498366,
+            "critical_threshold": 5.631809192420372
+        },
+        "amp_1x": {
+            "mean": 0.0004231782327747437,
+            "std": 6.873269851185896e-05,
+            "warning_threshold": 0.0006293763283103205,
+            "critical_threshold": 0.0008355744238458974
+        },
+        "env_bpfo_amp": {
+            "mean": 0.0005534222730073561,
+            "std": 0.0001762269678939077,
+            "warning_threshold": 0.0010821031766890792,
+            "critical_threshold": 0.0016107840803708023
+        },
+        "env_bpfi_amp": {
+            "mean": 0.0010669092609771585,
+            "std": 0.0005612726405662179,
+            "warning_threshold": 0.0027507271826758125,
+            "critical_threshold": 0.004434545104374466
+        },
+        "env_rolling_amp": {
+            "mean": 0.0007191289805143584,
+            "std": 9.29978244178588e-05,
+            "warning_threshold": 0.0009981224537679348,
+            "critical_threshold": 0.0012771159270215113
+        }
+    }
+}
