@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-    <h2>Maintenance History</h2>
+    <h2>Maintenance</h2>
 
     <h3>{{ machine["name"] }}</h3>
     <p>
@@ -14,6 +14,16 @@
         </a>
     </p>
 
+    <div class="panel form-panel">
+        <form method="post">
+            <input type="datetime-local" name="serviced_at" required>
+            <input type="text" name="action" placeholder="Action performed" required>
+            <textarea name="notes" placeholder="Notes"></textarea>
+            <button class="button button-primary" type="submit">Add record</button>
+        </form>
+    </div>
+
+    <h2>Maintenance History</h2>
     {% if records %}
 
     <table>

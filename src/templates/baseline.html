@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Baseline
+{% endblock %}
+
+{% block main %}
+    <p>    
+        <a href="{{ url_for('machine_detail', machine_id=machine['id']) }}">
+            &#8592; Back to {{ machine["name"] }}
+        </a>
+    </p>
+
+    {% if baseline %}
+        <div class="panel">
+            <h2>Current baseline</h2>
+            <div class="detail-row">
+                <span>Source</span>
+                <strong>{{ baseline["metadata"]["source_file"] }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Sampling rate</span>
+                <strong>{{ baseline["metadata"]["sampling_rate_hz"] }}</strong>
+            </div>
+            <div class="detail-row">
+                <span>Windows</span>
+                <strong>{{ baseline["metadata"]["window_count"] }}</strong>
+            </div>
+        </div>
+
+    {% endif %}
+
+    <div class="panel form-panel">
+        <h2>{{ machine["name"] }}</h2>
+        <form method="post" enctype="multipart/form-data">
+            <label>Baseline vibration file</label>
+            <input type="file" name="file" accept=".mat" required>
+            <label>Sampling rate</label>
+            <input type="number" name="sampling_rate" value="48000" min="1" required>
+            <label>Window duration (seconds)</label>
+            <input type="number" name="window_duration" value="1.0" step="0.1" min="0.1" required>
+            <label>RPM override</label>
+            <input type="number" name="rpm" step="0.1" placeholder="Leave blank if file contains RPM">
+            <button class="button button-primary" type="submit">Configure baseline</button>
+        </form>
+    </div>
+{% endblock %}

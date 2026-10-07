@@ -36,6 +36,23 @@ a {
     text-decoration: none;
 }
 
+/* Flash messages */
+.flash-message {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+}
+
+.flash-success {
+    border-color: rgba(34, 197, 94, 0.45);
+}
+
+.flash-error {
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
 /* App layout and sidebar */
 .app-shell {
     display: grid;
@@ -330,6 +347,61 @@ tbody tr:hover {
 .chart-container {
     position: relative;
     height: 280px;
+}
+
+/* Action row and buttons */
+.action-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--panel);
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+}
+
+.button:hover {
+    background: var(--panel-hover);
+}
+
+.button-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Forms */
+.form-panel {
+    max-width: 650px;
+}
+
+.form-panel form {
+    display: grid;
+    gap: 10px;
+}
+
+.form-panel input, .form-panel textarea, .form-panel select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: #0d0d0e;
+    color: var(--text);
+    font: inherit;
+    margin-bottom: 8px;
+}
+
+.form-panel label {
+    font-weight: 500;
 }
 
 /* Responsive design */

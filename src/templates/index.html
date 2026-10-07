@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block main %}
+    <a class="button button-primary" href="{{ url_for('new_machine') }}">Add machine</a>
+
     <h2>Machines</h2>
 
     {% if machines %}

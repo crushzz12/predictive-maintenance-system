@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    Add machine
+{% endblock %}
+
+{% block main %}
+    <div class="panel form-panel">
+        <form method="post">
+            <label>Machine name</label>
+            <input type="text" name="name" required>
+            <label>Machine type</label>
+            <input type="text" name="machine_type">
+            <label>Bearing model</label>
+            <input type="text" name="bearing_model">
+            <label>Description</label>
+            <textarea name="description" rows="4"></textarea>
+            <button class="button button-primary" type="submit">Create machine</button>
+        </form>
+    </div>
+{% endblock %}

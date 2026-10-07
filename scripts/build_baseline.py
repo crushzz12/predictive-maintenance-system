@@ -18,11 +18,24 @@ BASELINE_PATH = PROJECT_ROOT / "config" / "condition_baseline.json"
 # Load and segment the normal recording
 signal, rpm = load_cwru_file(NORMAL_FILE)
 windows = segment_signal(signal, SAMPLING_RATE, WINDOW_DURATION)
-print("Healthy windows:", len(windows))
+
+# Reserve some parts of the windows for healthy baseline
+BASELINE_FRACTION = 0.60
+split_index = int(len(windows) * BASELINE_FRACTION)
+if split_index < 2:
+    raise ValueError("Not enough healthy windows to build a baseline.")
+
+# Divide normal recording into baseline and validation windows
+baseline_windows = windows[:split_index]
+validation_windows = windows[split_index:]
+
+print("Total healthy windows:", len(windows))
+print("Baseline windows:", len(baseline_windows))
+print("Held-out healthy windows:", len(validation_windows))
 
 # Extract baseline features
 feature_rows = []
-for window in windows:
+for window in baseline_windows:
     time_features = extract_time_features(window)
     frequencies, amplitudes = calculate_fft(window, SAMPLING_RATE)
     shaft_frequency = rpm / 60
@@ -47,8 +60,14 @@ baseline = {
         "known_condition": "Normal",
         "sampling_rate_hz": SAMPLING_RATE,
         "windows_duration_s": WINDOW_DURATION,
-        "window_count": len(windows),
-        "note": "Baseline derived from non-overlapping windows of one CWRU normal recording."
+        "total_window_count": len(windows),
+        "baseline_window_count": len(baseline_windows),
+        "validation_window_count": len(validation_windows),
+        "baseline_fraction": BASELINE_FRACTION,
+        "note": (
+            "Baseline built from first portion of one CWRU Normal 0 HP recording. "
+            "Remaining windows reserved for validation."
+        )
     },
     "features": feature_profile
 }
