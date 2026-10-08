@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+
+{% block page_title %}
+    System validation
+{% endblock %}
+
+{% block main %}
+
+    <div class="validation-stack">
+    <section class="kpi-grid">
+        <div class="card">
+            <div class="kpi-label">Health accuracy</div>
+            <div class="kpi-value">
+                {{ "%.1f%%" | format(metrics["accuracy"] * 100) }}
+            </div>
+        </div>
+        <div class="card">
+            <div class="kpi-label">Sensitivity</div>
+            <div class="kpi-value">
+                {{ "%.1f%%" | format(metrics["sensitivity"] * 100) }}
+            </div>
+        </div>
+        <div class="card">
+            <div class="kpi-label">Specificity</div>
+            <div class="kpi-value">
+                {{ "%.1f%%" | format(metrics["specificity"] * 100) }}
+            </div>
+        </div>
+        <div class="card">
+            <div class="kpi-label">Bearing accuracy</div>
+            <div class="kpi-value">
+                {{ "%.1f%%" | format(bearing_metrics["overall_match_rate"] * 100) }}
+            </div>
+        </div>
+        <div class="card">
+            <div class="kpi-label">Validation windows</div>
+            <div class="kpi-value">
+                {{ total_windows }}
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2 class="panel-title">Health detection matrix</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Predicted abnormal</th>
+                    <th>Predicted normal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>Fault recording</th>
+                    <td>{{ metrics["tp"] }}</td>
+                    <td>{{ metrics["fn"] }}</td>
+                </tr>
+                <tr>
+                    <th>Normal recording</th>
+                    <td>{{ metrics["fp"] }}</td>
+                    <td>{{ metrics["tn"] }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="panel">
+        <h2 class="panel-title">Performance by condition</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Condition</th>
+                        <th>Windows</th>
+                        <th>Abnormal detection</th>
+                        <th>Bearing match</th>
+                        <th>Mean BPFO z</th>
+                        <th>Mean BPFI z</th>
+                        <th>Mean rolling z</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in summary %}
+
+                    <tr>
+                        <td>{{ row["known_condition"] }}</td>
+                        <td>{{ row["windows"] }}</td>
+                        <td>{{ "%.1f%%" | format(row["abnormal_detection_rate"] * 100) }}</td>
+                        <td>{{ "%.1f%%" | format(row["bearing_match_rate"] * 100) }}</td>
+                        <td>{{ "%.2f" | format(row["mean_bpfo_z"]) }}</td>
+                        <td>{{ "%.2f" | format(row["mean_bpfi_z"]) }}</td>
+                        <td>{{ "%.2f" | format(row["mean_rolling_z"]) }}</td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2 class="panel-title">Bearing-frequency evidence</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ground truth</th>
+                        
+                        {% for column in bearing_columns %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in bearing_rows %}
+
+                    <tr>
+                        <td>{{ row["condition"] }}</td>
+                        
+                        {% for value in row["values"] %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+
+                    </tr>
+                    
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+{% endblock %}

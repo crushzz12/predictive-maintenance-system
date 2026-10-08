@@ -100,7 +100,13 @@
     </p>
     <p>
         <strong>Bearing Evidence:</strong>
-        {{ assessment["bearing"]["strongest_label"] or "Not assessed" }}
+        {% if assessment["bearing"]["has_strong_evidence"] %}
+
+            {{ assessment["bearing"]["strongest_label"] }}
+        
+        {% else %}
+            No strong bearing-frequency evidence
+        {% endif %}
     </p>
     <table>
         <tr>

@@ -26,7 +26,7 @@
 
                 <nav class="sidebar-nav">
                     <a href="{{ url_for('index') }}" class="nav-link">
-                        <span>&#9638;</span>
+                        <span></span>
                         Machines
                     </a>
 
@@ -41,6 +41,11 @@
                     </a>
 
                     {% endif %}
+
+                    <a href="{{ url_for('validation') }}" class="nav-link">
+                        <span></span>
+                        Validation
+                    </a>
 
                 </nav>
 

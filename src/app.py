@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 
 from predictive_maintenance.analysis_service import analyze_recording
 from predictive_maintenance.baseline_service import build_machine_baseline, load_machine_baseline
-from predictive_maintenance.condition import load_baseline, evaluate_analysis
+from predictive_maintenance.condition import evaluate_analysis
 from predictive_maintenance.db import (
     initialize_database,
     get_all_machines,
@@ -19,6 +19,13 @@ from predictive_maintenance.db import (
     get_maintenance_history,
     add_machine,
     add_maintenance_record
+)
+from predictive_maintenance.validation_service import (
+    run_validation,
+    calculate_health_metrics,
+    calculate_condition_summary,
+    calculate_bearing_matrix,
+    calculate_bearing_metrics
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -275,6 +282,47 @@ def machine_baseline(machine_id):
     else:
         baseline = load_machine_baseline(machine_id)
         return render_template("baseline.html", machine=machine, baseline=baseline)
+
+
+@app.route("/validation")
+def validation():
+    data_directory = PROJECT_ROOT / "data" / "cwru" / "raw"
+    try:
+        results, baseline = run_validation(
+            data_directory,
+            sampling_rate=48000,
+            window_duration=1.0,
+            baseline_fraction=0.60
+        )
+    except Exception as error:
+        flash(f"Validation failed: {error}", "error")
+        return redirect(url_for("index"))
+
+    metrics = calculate_health_metrics(results)
+    bearing_metrics = calculate_bearing_metrics(results)
+    summary = calculate_condition_summary(results)
+    bearing_matrix = calculate_bearing_matrix(results)
+
+    # Convert DataFrames to template-friendly structures
+    summary_rows = summary.to_dict(orient="records")
+    bearing_columns = list(bearing_matrix.columns)
+    bearing_rows = []
+    for condition, row in bearing_matrix.iterrows():
+        bearing_rows.append({
+            "condition": condition,
+            "values": [int(row[column]) for column in bearing_columns]
+        })
+
+    return render_template(
+        "validation.html",
+        metrics=metrics,
+        summary=summary_rows,
+        bearing_columns=bearing_columns,
+        bearing_rows=bearing_rows,
+        baseline_metadata=baseline["metadata"],
+        total_windows=len(results),
+        bearing_metrics=bearing_metrics
+    )
 
 
 if __name__ == "__main__":

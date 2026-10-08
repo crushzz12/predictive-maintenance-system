@@ -284,6 +284,11 @@ a {
     margin-top: 5px;
 }
 
+.validation-stack {
+    display: grid;
+    gap: 18px;
+}
+
 /* Details */
 .detail-row {
     display: flex;
