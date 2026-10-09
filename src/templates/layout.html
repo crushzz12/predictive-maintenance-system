@@ -10,7 +10,9 @@
             {% endblock %}
         </title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="{{ url_for('static', filename='app.js') }}" defer></script>
     </head>
 
     <body>
@@ -25,25 +27,45 @@
                 </div>
 
                 <nav class="sidebar-nav">
-                    <a href="{{ url_for('index') }}" class="nav-link">
-                        <span></span>
+                    <a href="{{ url_for('index') }}" 
+                        class="nav-link 
+                            {% if request.endpoint == 'index' %}
+                                active
+                            {% endif %}
+                        "
+                    >
                         Machines
                     </a>
 
                     {% if machine is defined %}
-                    <a href="{{ url_for('machine_detail', machine_id=machine['id']) }}" class="nav-link">
-                        <span></span>
-                        Dashboard
+                    <a href="{{ url_for('machine_detail', machine_id=machine['id']) }}" 
+                        class="nav-link 
+                            {% if request.endpoint == 'machine_detail' %}
+                                active
+                            {% endif %}
+                        "
+                    >
+                    Dashboard
                     </a>
-                    <a href="{{ url_for('maintenance', machine_id=machine['id']) }}" class="nav-link">
-                        <span></span>
+                    <a href="{{ url_for('maintenance', machine_id=machine['id']) }}" 
+                        class="nav-link
+                            {% if request.endpoint == 'maintenance' %}
+                                active
+                            {% endif %}
+                        "
+                    >
                         Maintenance
                     </a>
 
                     {% endif %}
 
-                    <a href="{{ url_for('validation') }}" class="nav-link">
-                        <span></span>
+                    <a href="{{ url_for('validation') }}" 
+                        class="nav-link
+                            {% if request.endpoint == 'validation' %}
+                                active
+                            {% endif %}
+                        "
+                    >
                         Validation
                     </a>
 

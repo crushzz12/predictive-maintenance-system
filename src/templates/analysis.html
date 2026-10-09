@@ -5,6 +5,10 @@
 {% endblock %}
 
 {% block main %}
+
+    {% set status = assessment["health"]["status"] or "Not assessed" %}
+    {% set status_class = status | lower | replace(" ", "-") %}
+
     <h2>Analysis {{ analysis["analysis_id"] }}</h2>
     <p>
         <a href="{{ url_for('machine_detail', machine_id=analysis['machine_id']) }}">
@@ -12,7 +16,108 @@
         </a>
     </p>
 
-    <h3>Measurement Information</h3>
+    <section class="kpi-grid">
+        <div class="card">
+            <div class="kpi-label">Machine Health</div>
+            <span class="status-badge status-{{ status_class }}">{{ status }}</span>
+        </div>
+        <div class="card">
+            <div class="kpi-label">Shaft Speed</div>
+            <div class="kpi-value">
+
+                {% if analysis["rpm"] is not none %}
+
+                    {{ "%.0f" | format(analysis["rpm"]) }}
+                    <span class="kpi-unit">RPM</span>
+
+                {% else %}
+                    -
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="card">
+            <div class="kpi-label">RMS</div>
+            <div class="kpi-value">
+                {{ "%.4f" | format(analysis["rms"]) }}
+            </div>
+        </div>
+        <div class="card">
+            <div class="kpi-label">Kurtosis</div>
+            <div class="kpi-value">
+                {{ "%.2f" | format(analysis["kurtosis"]) }}
+            </div>
+        </div>
+        <div class="card">
+            <div class="kpi-label">Crest Factor</div>
+            <div class="kpi-value">
+                {{ "%.2f" | format(analysis["crest_factor"]) }}
+            </div>
+        </div>
+    </section>
+
+
+    <h3>Condition Assessment</h3>
+    <p>
+        <strong>Fault indicator:</strong>
+        {{ assessment["health"]["fault_indicator"] or "Not assessed" }}
+    </p>
+    <p>
+        <strong>Bearing Evidence:</strong>
+        {% if assessment["bearing"]["has_strong_evidence"] %}
+
+            {{ assessment["bearing"]["strongest_label"] }}
+        
+        {% else %}
+            No strong bearing-frequency evidence
+        {% endif %}
+    </p>
+    
+    <div class="validation-stack">
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <h2 class="panel-title">Bearing-frequency evidence</h2>
+                <div class="panel-subtitle">
+                    Envelope-spectrum deviation from the healthy baseline
+                </div>
+            </div>
+        </div>
+        <div class="evidence-list">
+            {% for feature in bearing_evidence_rows %}
+            <div class="evidence-item">
+                <div class="evidence-heading">
+                    <span>{{ feature["label"] }}</span>
+                    <span class="evidence-number {% if feature['strong'] %} evidence-strong {% endif %}">
+                        {{ "%+.2f" | format(feature["z_score"]) }} &#x3C3;
+                    </span>
+                </div>
+                <div class="evidence-track">
+                    <div class="evidence-threshold"></div>
+                    <div class="evidence-fill {% if feature['strong'] %} evidence-fill-strong {% endif %}"
+                        data-width="{{ feature['width'] }}"
+                    ></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="evidence-result">
+            <span>Assessment</span>
+            <strong>
+            {% if assessment["bearing"]["has_strong_evidence"] %}
+
+                {{ assessment["bearing"]["strongest_label"] }}
+    
+            {% else %}
+                No strong bearing-frequency evidence
+            {% endif %}
+            </strong>
+        </div>
+    </section>
+
+    <section class="panel">
+    <h2 class="panel-title">Measurement Information</h2>
+    <div class="panel-subtitle"></div>
 
     <table>
         <tr>
@@ -40,36 +145,38 @@
             <td>{{ analysis["window_duration_s"] }} s</td>
         </tr>
     </table>
+    </section>
+    </div>
 
     <h3>Time-Domain Features</h3>
     <table>
         <tr>
             <th>Mean</th>
-            <td>{{ analysis["mean"] }}</td>
+            <td>{{ "%.4f" | format(analysis["mean"]) }}</td>
         </tr>
         <tr>
             <th>RMS</th>
-            <td>{{ analysis["rms"] }}</td>
+            <td>{{ "%.4f" | format(analysis["rms"]) }}</td>
         </tr>
         <tr>
             <th>Peak</th>
-            <td>{{ analysis["peak"] }}</td>
+            <td>{{ "%.4f" | format(analysis["peak"]) }}</td>
         </tr>
         <tr>
             <th>Peak-to-peak</th>
-            <td>{{ analysis["peak_to_peak"] }}</td>
+            <td>{{ "%.4f" | format(analysis["peak_to_peak"]) }}</td>
         </tr>
         <tr>
             <th>Standard deviation</th>
-            <td>{{ analysis["std"] }}</td>
+            <td>{{ "%.4f" | format(analysis["std"]) }}</td>
         </tr>
         <tr>
             <th>Crest factor</th>
-            <td>{{ analysis["crest_factor"] }}</td>
+            <td>{{ "%.4f" | format(analysis["crest_factor"]) }}</td>
         </tr>
         <tr>
             <th>Kurtosis</th>
-            <td>{{ analysis["kurtosis"] }}</td>
+            <td>{{ "%.4f" | format(analysis["kurtosis"]) }}</td>
         </tr>
     </table>
 
@@ -77,49 +184,15 @@
     <table>
         <tr>
             <th>1X amplitude</th>
-            <td>{{ analysis["amp_1x"] }}</td>
+            <td>{{ "%.5g" | format(analysis["amp_1x"]) }}</td>
         </tr>
         <tr>
             <th>2X amplitude</th>
-            <td>{{ analysis["amp_2x"] }}</td>
+            <td>{{ "%.5g" | format(analysis["amp_2x"]) }}</td>
         </tr>
         <tr>
             <th>3X amplitude</th>
-            <td>{{ analysis["amp_3x"] }}</td>
-        </tr>
-    </table>
-
-    <h3>Condition Assessment</h3>
-    <p>
-        <strong>Status:</strong>
-        {{ assessment["health"]["status"] or "Not assessed" }}
-    </p>
-    <p>
-        <strong>Fault indicator:</strong>
-        {{ assessment["health"]["fault_indicator"] or "Not assessed" }}
-    </p>
-    <p>
-        <strong>Bearing Evidence:</strong>
-        {% if assessment["bearing"]["has_strong_evidence"] %}
-
-            {{ assessment["bearing"]["strongest_label"] }}
-        
-        {% else %}
-            No strong bearing-frequency evidence
-        {% endif %}
-    </p>
-    <table>
-        <tr>
-            <th>BPFO evidence</th>
-            <td>{{ "%.2f" | format(assessment["bearing"]["z_scores"]["env_bpfo_amp"]) }}</td>
-        </tr>
-        <tr>
-            <th>BPFI evidence</th>
-            <td>{{ "%.2f" | format(assessment["bearing"]["z_scores"]["env_bpfi_amp"]) }}</td>
-        </tr>
-        <tr>
-            <th>Rolling Evidence</th>
-            <td>{{ "%.2f" | format(assessment["bearing"]["z_scores"]["env_rolling_amp"]) }}</td>
+            <td>{{ "%.5g" | format(analysis["amp_3x"]) }}</td>
         </tr>
     </table>
 

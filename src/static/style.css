@@ -111,6 +111,7 @@ a {
     border-radius: 9px;
     color: var(--muted);
     transition: background 0.2s, color 0.2s;
+    border-left: 3px solid transparent;
 }
 
 .nav-link:hover {
@@ -118,9 +119,9 @@ a {
     background: rgba(255, 255, 255, 0.05);
 }
 
-.nav-link:active {
+.nav-link.active {
     background: rgba(59, 130, 246, 0.15);
-    color: #ffffff;
+    color: var(--text);
 }
 
 .sidebar-footer {
@@ -407,6 +408,68 @@ tbody tr:hover {
 
 .form-panel label {
     font-weight: 500;
+}
+
+/* Bearing-frequency evidence visualization */
+.evidence-list {
+    display: grid;
+    gap: 22px;
+}
+
+.evidence-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.evidence-number {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.evidence-strong {
+    color: var(--warning);
+}
+
+.evidence-track {
+    position: relative;
+    height: 9px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #242529;
+}
+
+.evidence-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: #555861;
+    width: 0%;
+    transition: width 0.6s ease-out;
+}
+
+.evidence-fill-strong {
+    background: var(--warning);
+}
+
+.evidence-threshold {
+    position: absolute;
+    /* 3 sigma threshold on a 12 sigma display scale: 3 / 12 = 25% */
+    left: 25%;
+    top: -3px;
+    bottom: -3px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.55);
+    z-index: 2;
+}
+
+.evidence-result {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
 }
 
 /* Responsive design */

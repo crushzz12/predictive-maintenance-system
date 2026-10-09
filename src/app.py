@@ -99,7 +99,38 @@ def analysis_detail(analysis_id):
     baseline = load_machine_baseline(machine_id)
     assessment = evaluate_analysis(analysis, baseline)
 
-    return render_template("analysis.html", analysis=analysis, assessment=assessment)
+    # Extract data for bearing-frequency evidence visualization 
+    bearing = assessment["bearing"]
+    z_scores = bearing["z_scores"]
+
+    # Set threshold for visualization
+    VISUAL_Z_MAX = 12.0  # Set the ceiling for visual scaling (z-score >= 12 represents 100%)
+    EVIDENCE_THRESHOLD = 3.0
+
+    evidence_config = (
+        ("Outer race (BPFO)", "env_bpfo_amp"),
+        ("Inner race (BPFI)", "env_bpfi_amp"),
+        ("Rolling element", "env_rolling_amp")
+    )
+
+    bearing_evidence_rows = []
+    for label, feature_name in evidence_config:
+        z_score = z_scores.get(feature_name, 0.0)
+        positive_z = max(z_score, 0.0)  # Ignore negative z-scores for visual
+        width = min(positive_z / VISUAL_Z_MAX * 100, 100)
+        bearing_evidence_rows.append({
+            "label": label,
+            "z_score": z_score,
+            "width": width,
+            "strong": z_score >= EVIDENCE_THRESHOLD
+        })
+
+    return render_template(
+        "analysis.html",
+        analysis=analysis,
+        assessment=assessment,
+        bearing_evidence_rows=bearing_evidence_rows
+    )
 
 
 @app.route("/machine/<int:machine_id>/maintenance", methods=["GET", "POST"])
