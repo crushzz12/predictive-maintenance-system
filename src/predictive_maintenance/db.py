@@ -185,7 +185,7 @@ def add_analysis_run(
         connection.close()
 
 
-def get_analysis_history(machine_id, limit=100, database_path=DEFAULT_DATABASE_PATH):
+def get_analysis_history(machine_id, limit=100, offset=0, database_path=DEFAULT_DATABASE_PATH):
     """Return recent analysis histories for a machine."""
 
     connection = get_connection(database_path)
@@ -225,11 +225,27 @@ def get_analysis_history(machine_id, limit=100, database_path=DEFAULT_DATABASE_P
             WHERE analysis_runs.machine_id = ? 
             ORDER BY analysis_runs.id DESC 
             LIMIT ?
+            OFFSET ?
             """,
-            (machine_id, limit)
+            (machine_id, limit, offset)
         ).fetchall()
 
         return histories
+    finally:
+        connection.close()
+
+
+def get_analysis_history_count(machine_id, database_path=DEFAULT_DATABASE_PATH):
+    """Return the total number of analysis runs for a machine."""
+
+    connection = get_connection(database_path)
+    try:
+        record = connection.execute(
+            "SELECT COUNT(*) AS count FROM analysis_runs WHERE machine_id = ?",
+            (machine_id,)
+        ).fetchone()
+
+        return record["count"]
     finally:
         connection.close()
 

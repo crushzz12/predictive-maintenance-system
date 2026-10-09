@@ -4,6 +4,10 @@
     Analysis {{ analysis["analysis_id"] }}
 {% endblock %}
 
+{% block page_title %}
+    {{ analysis["machine_name"] }}
+{% endblock %}
+
 {% block main %}
 
     {% set status = assessment["health"]["status"] or "Not assessed" %}
@@ -56,8 +60,9 @@
         </div>
     </section>
 
-
-    <h3>Condition Assessment</h3>
+    <div class="validation-stack">
+    <section class="panel">
+    <h2 class="panel-title">Condition Assessment</h2>
     <p>
         <strong>Fault indicator:</strong>
         {{ assessment["health"]["fault_indicator"] or "Not assessed" }}
@@ -72,8 +77,8 @@
             No strong bearing-frequency evidence
         {% endif %}
     </p>
+    </section>
     
-    <div class="validation-stack">
     <section class="panel">
         <div class="panel-header">
             <div>
@@ -97,6 +102,11 @@
                     <div class="evidence-fill {% if feature['strong'] %} evidence-fill-strong {% endif %}"
                         data-width="{{ feature['width'] }}"
                     ></div>
+                </div>
+                <div class="evidence-scale">
+                    <span>Healthy reference</span>
+                    <span>3&#x3C3; evidence threshold</span>
+                    <span>Strong deviation</span>
                 </div>
             </div>
             {% endfor %}
@@ -148,52 +158,76 @@
     </section>
     </div>
 
-    <h3>Time-Domain Features</h3>
-    <table>
-        <tr>
-            <th>Mean</th>
-            <td>{{ "%.4f" | format(analysis["mean"]) }}</td>
-        </tr>
-        <tr>
-            <th>RMS</th>
-            <td>{{ "%.4f" | format(analysis["rms"]) }}</td>
-        </tr>
-        <tr>
-            <th>Peak</th>
-            <td>{{ "%.4f" | format(analysis["peak"]) }}</td>
-        </tr>
-        <tr>
-            <th>Peak-to-peak</th>
-            <td>{{ "%.4f" | format(analysis["peak_to_peak"]) }}</td>
-        </tr>
-        <tr>
-            <th>Standard deviation</th>
-            <td>{{ "%.4f" | format(analysis["std"]) }}</td>
-        </tr>
-        <tr>
-            <th>Crest factor</th>
-            <td>{{ "%.4f" | format(analysis["crest_factor"]) }}</td>
-        </tr>
-        <tr>
-            <th>Kurtosis</th>
-            <td>{{ "%.4f" | format(analysis["kurtosis"]) }}</td>
-        </tr>
-    </table>
-
-    <h3>Frequency-Domain Features</h3>
-    <table>
-        <tr>
-            <th>1X amplitude</th>
-            <td>{{ "%.5g" | format(analysis["amp_1x"]) }}</td>
-        </tr>
-        <tr>
-            <th>2X amplitude</th>
-            <td>{{ "%.5g" | format(analysis["amp_2x"]) }}</td>
-        </tr>
-        <tr>
-            <th>3X amplitude</th>
-            <td>{{ "%.5g" | format(analysis["amp_3x"]) }}</td>
-        </tr>
-    </table>
+    <details class="advanced-details">
+        <summary>Advanced signal features</summary>
+        <div class="advanced-content">
+            <div class="feature-section">
+                <h3>Time-Domain Features</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <span>Mean</span>
+                        <strong>{{ "%.5f" | format(analysis["mean"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>RMS</span>
+                        <strong>{{ "%.5f" | format(analysis["rms"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>Peak</span>
+                        <strong>{{ "%.5f" | format(analysis["peak"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>Peak-to-peak</span>
+                        <strong>{{ "%.5f" | format(analysis["peak_to_peak"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>Standard deviation</span>
+                        <strong>{{ "%.5f" | format(analysis["std"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>Crest factor</span>
+                        <strong>{{ "%.5f" | format(analysis["crest_factor"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>Kurtosis</span>
+                        <strong>{{ "%.5f" | format(analysis["kurtosis"]) }}</strong>
+                    </div>
+                </div>    
+            </div>
+            <div class="feature-section">
+                <h3>Frequency-Domain features</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <span>1X amplitude</span>
+                        <strong>{{ "%.6f" | format(analysis["amp_1x"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>2X amplitude</span>
+                        <strong>{{ "%.6f" | format(analysis["amp_2x"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>3X amplitude</span>
+                        <strong>{{ "%.6f" | format(analysis["amp_3x"]) }}</strong>
+                    </div>
+                </div>    
+            </div>
+            <div class="feature-section">
+                <h3>Envelope-Spectrum Features</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <span>BPFO amplitude</span>
+                        <strong>{{ "%.6f" | format(analysis["env_bpfo_amp"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>BPFI amplitude</span>
+                        <strong>{{ "%.6f" | format(analysis["env_bpfi_amp"]) }}</strong>
+                    </div>
+                    <div class="feature-item">
+                        <span>Rolling-element amplitude</span>
+                        <strong>{{ "%.6f" | format(analysis["env_rolling_amp"]) }}</strong>
+                    </div>
+                </div>    
+            </div>
+        </div>
 
 {% endblock %}

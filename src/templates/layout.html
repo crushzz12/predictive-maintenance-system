@@ -47,6 +47,26 @@
                     >
                     Dashboard
                     </a>
+                    </a>
+                    <a href="{{ url_for('analysis_history', machine_id=machine['id']) }}" 
+                        class="nav-link
+                            {% if request.endpoint in ['analysis_history', 'analysis_detail', 'new_analysis'] %}
+                                active
+                            {% endif %}
+                        "
+                    >
+                        Analysis history
+                    </a>
+                    <a href="{{ url_for('machine_baseline', machine_id=machine['id']) }}" 
+                        class="nav-link
+                            {% if request.endpoint == 'machine_baseline' %}
+                                active
+                            {% endif %}
+                        "
+                    >
+                        Baseline
+                    </a>
+                    </a>
                     <a href="{{ url_for('maintenance', machine_id=machine['id']) }}" 
                         class="nav-link
                             {% if request.endpoint == 'maintenance' %}

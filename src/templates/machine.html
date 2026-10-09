@@ -175,7 +175,6 @@
                 <thead>
                     <tr>
                         <th>Analysis</th>
-                        <th>Condition</th>
                         <th>RPM</th>
                         <th>RMS</th>
                         <th>Kurtosis</th>
@@ -192,7 +191,6 @@
                                 #{{ analysis["analysis_id"] }}
                             </a>
                         </td>
-                        <td>{{ analysis["known_condition"] or "-"}}</td>
                         <td>
                             {% if analysis["rpm"] is not none %}
                                 {{ "%.0f" | format(analysis["rpm"]) }}
@@ -215,6 +213,14 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+        <div class="panel-footer">
+            <a class="button" href="{{ url_for('analysis_history', machine_id=machine['id']) }}">
+                View all analysis
+                <span class="button-count">
+                    {{ analysis_count }}
+                </span>
+            </a>
         </div>
     </section>
 

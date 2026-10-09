@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Analysis History
+{% endblock %}
+
+{% block page_title %}
+    {{ machine["name"] }}
+{% endblock %}
+
+{% block main %}
+<h2>Analysis History</h2>
+<p>
+    <a href="{{ url_for('machine_detail', machine_id=machine['id']) }}">
+        &#8592; Back to {{ machine["name"] }}
+    </a>
+</p>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <h2 class="panel-title">Analysis History</h2>
+            <div class="panel-subtitle">Latest machine measurements</div>
+        </div>
+    </div>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Analysis</th>
+                    <th>RPM</th>
+                    <th>RMS</th>
+                    <th>Kurtosis</th>
+                    <th>Crest Factor</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for analysis in analyses %}
+
+                <tr>
+                    <td>
+                        <a class="analysis-link" href="{{ url_for('analysis_detail', analysis_id=analysis['analysis_id']) }}">
+                            #{{ analysis["analysis_id"] }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if analysis["rpm"] is not none %}
+                            {{ "%.0f" | format(analysis["rpm"]) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ "%.4f" | format(analysis["rms"]) }}
+                    </td>
+                    <td>
+                        {{ "%.2f" | format(analysis["kurtosis"]) }}
+                    </td>
+                    <td>
+                        {{ "%.2f" | format(analysis["crest_factor"]) }}
+                    </td>
+                    <td>{{ analysis["assessment"]["health"]["status"] or "Not assessed" }}</td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination">
+        {% if page > 1 %}
+        <a class="button" href="{{ url_for('analysis_history', machine_id=machine['id'], page=page - 1) }}">
+            Previous
+        </a>
+        {% endif %}
+
+        <span class="pagination-info">
+            Page {{ page }} of {{ total_pages }}
+        </span>
+
+        {% if page < total_pages %}
+        <a class="button" href="{{ url_for('analysis_history', machine_id=machine['id'], page=page + 1) }}">
+            Next
+        </a>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

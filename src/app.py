@@ -1,4 +1,5 @@
 import sqlite3
+import math
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -15,6 +16,7 @@ from predictive_maintenance.db import (
     get_all_machines,
     get_machine_by_id,
     get_analysis_history,
+    get_analysis_history_count,
     get_analysis_by_id,
     get_maintenance_history,
     add_machine,
@@ -56,7 +58,8 @@ def machine_detail(machine_id):
         abort(404)
 
     # Get analysis histories (by default is ordered newest first)
-    analyses = get_analysis_history(machine_id)
+    analyses = get_analysis_history(machine_id, limit=10)
+    analysis_count = get_analysis_history_count(machine_id)
     baseline = load_machine_baseline(machine_id)
 
     analysis_items = []
@@ -83,7 +86,50 @@ def machine_detail(machine_id):
         latest_analysis=latest_analysis,
         chart_labels=chart_labels,
         rms_values=rms_values,
-        kurtosis_values=kurtosis_values
+        kurtosis_values=kurtosis_values,
+        analysis_count=analysis_count
+    )
+
+
+@app.route("/machine/<int:machine_id>/analyses")
+def analysis_history(machine_id):
+    machine = get_machine_by_id(machine_id)
+    if machine is None:
+        abort(404)
+
+    # Calculate pagination
+    page = max(request.args.get("page", 1, type=int), 1)
+
+    page_size = 20
+
+    total = get_analysis_history_count(machine_id)
+    total_pages = max(math.ceil(total / page_size), 1)
+
+    # Protect overflowing (users request page=99 when only 3 pages)
+    if page > total_pages:
+        page = total_pages
+
+    # Calculate offset for SQLite query
+    offset = (page - 1) * page_size
+
+    # Get records and evaluate with baseline
+    rows = get_analysis_history(machine_id, limit=page_size, offset=offset)
+    baseline = load_machine_baseline(machine_id)
+    analyses = []
+    for row in rows:
+        analysis = dict(row)
+        if baseline is not None:
+            analysis["assessment"] = evaluate_analysis(analysis, baseline)
+        else:
+            analysis["assessment"] = None
+        analyses.append(analysis)
+
+    return render_template(
+        "analysis_history.html",
+        machine=machine,
+        analyses=analyses,
+        page=page,
+        total_pages=total_pages
     )
 
 
@@ -96,6 +142,7 @@ def analysis_detail(analysis_id):
         abort(404)
 
     machine_id = analysis["machine_id"]
+    machine = get_machine_by_id(machine_id)
     baseline = load_machine_baseline(machine_id)
     assessment = evaluate_analysis(analysis, baseline)
 
@@ -127,6 +174,7 @@ def analysis_detail(analysis_id):
 
     return render_template(
         "analysis.html",
+        machine=machine,
         analysis=analysis,
         assessment=assessment,
         bearing_evidence_rows=bearing_evidence_rows
