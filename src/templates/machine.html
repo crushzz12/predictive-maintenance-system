@@ -10,11 +10,6 @@
 
 {% block main %}
 
-    {% if latest_analysis %}
-
-    {% set status = latest_analysis["assessment"]["health"]["status"] or "Not assessed" %}
-    {% set status_class = status | lower | replace(" ", "-") %}
-
     <div class="action-row">
         <a class="button button-primary" href="{{ url_for('new_analysis', machine_id=machine['id']) }}">
             New analysis
@@ -26,6 +21,11 @@
             Maintenance
         </a>
     </div>
+
+    {% if latest_analysis %}
+
+    {% set status = latest_analysis["assessment"]["health"]["status"] if latest_analysis.get("assessment") else "Not assessed" %}
+    {% set status_class = status | lower | replace(" ", "-") %}
 
 
     <section class="kpi-grid">
@@ -104,10 +104,6 @@
                 <span class="detail-label">Sampling rate</span>
                 <span class="detail-value">{{ latest_analysis["sampling_rate_hz"] }} Hz</span>
             </div>
-            <div class="detail-row">
-                <span class="detail-label">Dataset label</span>
-                <span class="detail-value">{{ latest_analysis["known_condition"] or "-" }}</span>
-            </div>
         </div>
     </section>
 
@@ -137,15 +133,13 @@
             </div>
             <div class="detail-row">
                 <span class="detail-label">Fault indicator</span>
-                <span class="detail-value">{{ latest_analysis["assessment"]["health"]["fault_indicator"] or "Not assessed" }}</span>
+                <span class="detail-value">{{ latest_analysis["assessment"]["health"]["fault_indicator"] if latest_analysis.get("assessment") else "Not assessed" }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Bearing evidence</span>
                 <span class="detail-value">
-                    {% if latest_analysis["assessment"]["bearing"]["has_strong_evidence"] %}
-
-                        {{ latest_analysis["assessment"]["strongest_label"] }}
-                    
+                    {% if latest_analysis.get("assessment") and latest_analysis["assessment"]["bearing"]["has_strong_evidence"] %}
+                        {{ latest_analysis["assessment"]["bearing"]["strongest_label"] }}
                     {% else %}
                         No strong bearing-frequency evidence
                     {% endif %}
@@ -207,7 +201,7 @@
                         <td>
                             {{ "%.2f" | format(analysis["crest_factor"]) }}
                         </td>
-                        <td>{{ analysis["assessment"]["health"]["status"] or "Not assessed" }}</td>
+                        <td>{{ analysis["assessment"]["health"]["status"] if analysis.get("assessment") else "Not assessed" }}</td>
                     </tr>
 
                     {% endfor %}

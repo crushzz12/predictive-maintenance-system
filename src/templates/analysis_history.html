@@ -60,7 +60,7 @@
                     <td>
                         {{ "%.2f" | format(analysis["crest_factor"]) }}
                     </td>
-                    <td>{{ analysis["assessment"]["health"]["status"] or "Not assessed" }}</td>
+                    <td>{{ analysis["assessment"]["health"]["status"] if analysis.get("assessment") else "Not assessed" }}</td>
                 </tr>
 
                 {% endfor %}

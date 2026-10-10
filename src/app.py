@@ -145,6 +145,10 @@ def analysis_detail(analysis_id):
     machine_id = analysis["machine_id"]
     machine = get_machine_by_id(machine_id)
     baseline = load_machine_baseline(machine_id)
+    if baseline is None:
+        flash("A baseline is required to review analysis detail.", "error")
+        return redirect(url_for("machine_detail", machine_id=machine_id))
+
     assessment = evaluate_analysis(analysis, baseline)
 
     # Extract data for bearing-frequency evidence visualization 
