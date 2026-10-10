@@ -58,7 +58,6 @@ This project combines mechanical vibration analysis with software engineering to
 
 ## How It Works
 
-[![Pipeline](docs/images/pipeline.svg#gh-light-mode-only)](docs/images/pipeline.svg)
 [![Pipeline](docs/images/pipeline-dark.svg#gh-dark-mode-only)](docs/images/pipeline-dark.svg)
 
 The system processed uploaded `.mat` vibration recordings by segmenting the signal and extracting features, such as time-domain features, running-speed frequency components using FFT, and bearing characteristics-frequency components using envelope analysis.
@@ -96,7 +95,7 @@ The report has the same content as the Analysis Details page and can be exported
 ## Installation
 
 ```bash
-git clone <repository>
+git clone https://github.com/crushzz12/predictive-maintenance-system.git
 cd predictive-maintenance-system
 
 python -m venv .venv
