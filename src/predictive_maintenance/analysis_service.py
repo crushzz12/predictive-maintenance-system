@@ -1,3 +1,8 @@
+# AI assistance disclosure:
+# OpenAI ChatGPT was used to discuss the implementation, explain relevant concepts, 
+# and provide code examples.
+# The final implementation was adapted and tested as part of this project.
+
 from predictive_maintenance.data_loader import load_cwru_file, segment_signal
 from predictive_maintenance.features import extract_time_features
 from predictive_maintenance.spectrum import calculate_fft, get_frequency_amplitude
