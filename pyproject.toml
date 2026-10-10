@@ -13,7 +13,8 @@ dependencies = [
     "pandas",
     "scipy",
     "matplotlib",
-    "flask"
+    "flask",
+    "reportlab"
 ]
 
 [tool.setuptools.packages.find]

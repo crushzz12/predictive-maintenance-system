@@ -13,7 +13,12 @@
     {% set status = assessment["health"]["status"] or "Not assessed" %}
     {% set status_class = status | lower | replace(" ", "-") %}
 
+    <header class="analysis-header">
     <h2>Analysis {{ analysis["analysis_id"] }}</h2>
+    <a class="button button-primary" href="{{ url_for('analysis_report', analysis_id=analysis['analysis_id']) }}">
+        Download PDF Report
+    </a>
+    </header>
     <p>
         <a href="{{ url_for('machine_detail', machine_id=analysis['machine_id']) }}">
             &#8592; Back to {{ analysis["machine_name"] }}
@@ -137,10 +142,6 @@
         <tr>
             <th>Source file</th>
             <td>{{ analysis["source_file"] or "-"}}</td>
-        </tr>
-        <tr>
-            <th>Known condition</th>
-            <td>{{ analysis["known_condition"] or "-"}}</td>
         </tr>
         <tr>
             <th>RPM</th>

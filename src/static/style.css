@@ -441,6 +441,17 @@ tbody tr:hover {
     font-weight: 500;
 }
 
+/* Analysis Header */
+.analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.analysis-header h2 {
+    margin-bottom: 0px;
+}
+
 /* Bearing-frequency evidence visualization */
 .evidence-list {
     display: grid;

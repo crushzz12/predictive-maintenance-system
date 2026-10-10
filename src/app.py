@@ -4,10 +4,11 @@ import math
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from flask import Flask, render_template, abort, request, redirect, url_for, flash
+from flask import Flask, render_template, abort, request, redirect, url_for, flash, send_file
 
 from werkzeug.utils import secure_filename
 
+from predictive_maintenance.report_service import generate_analysis_report
 from predictive_maintenance.analysis_service import analyze_recording
 from predictive_maintenance.baseline_service import build_machine_baseline, load_machine_baseline
 from predictive_maintenance.condition import evaluate_analysis
@@ -178,6 +179,35 @@ def analysis_detail(analysis_id):
         analysis=analysis,
         assessment=assessment,
         bearing_evidence_rows=bearing_evidence_rows
+    )
+
+
+@app.route("/analysis/<int:analysis_id>/report")
+def analysis_report(analysis_id):
+    """Generate and download PDF report for a specific analysis run."""
+
+    # Get analysis record
+    row = get_analysis_by_id(analysis_id)
+    if row is None:
+        abort(404)
+
+    analysis = dict(row)
+
+    # Ensure that baseline exists
+    baseline = load_machine_baseline(analysis["machine_id"])
+    if baseline is None:
+        flash("A baseline is required before generating an assessment report.", "error")
+        return redirect(url_for("analysis_detail", analysis_id=analysis_id))
+
+    # Evaluate with baseline and generate in-memory PDF
+    assessment = evaluate_analysis(analysis, baseline)
+    pdf_buffer = generate_analysis_report(analysis, assessment)
+
+    return send_file(
+        pdf_buffer,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=f"analysis_{analysis_id}_report.pdf"
     )
 
 

@@ -11,6 +11,7 @@
         </a>
     </p>
 
+    <div class="validation-stack">
     {% if baseline %}
         <div class="panel">
             <h2>Current baseline</h2>
@@ -43,5 +44,6 @@
             <input type="number" name="rpm" step="0.1" placeholder="Leave blank if file contains RPM">
             <button class="button button-primary" type="submit">Configure baseline</button>
         </form>
+    </div>
     </div>
 {% endblock %}
