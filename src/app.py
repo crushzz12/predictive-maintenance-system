@@ -1,5 +1,6 @@
 import sqlite3
 import math
+import os
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -35,8 +36,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 app = Flask(__name__)
 
-# For flash for local testing only, not suitable for production
-app.config["SECRET_KEY"] = "development-key"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "local-development-key")
 
 # Restrict max file upload size to 50 MB
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024
@@ -324,7 +324,7 @@ def new_analysis(machine_id):
                     rpm_override=rpm_override,
                     source_filename=filename
                 )
-        except (ValueError, KeyError, FileNotFoundError) as error:
+        except (ValueError, KeyError, OSError) as error:
             flash(str(error), "error")
             return redirect(request.url)
 
@@ -379,7 +379,7 @@ def machine_baseline(machine_id):
                     rpm_override=rpm_override,
                     source_filename=filename
                 )
-        except (ValueError, KeyError, FileNotFoundError) as error:
+        except (ValueError, KeyError, OSError) as error:
             flash(str(error), "error")
             return redirect(request.url)
 
