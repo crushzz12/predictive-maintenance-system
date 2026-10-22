@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *.egg-info/
 data/cwru/raw/*.mat
+data/ims/raw/
 database/*.db
 database/*.db-shm
 database/*.db-wal
